@@ -200,6 +200,7 @@ public class Destructo extends WinApp implements ActionListener {
     return res;
   }
 
+  //this is how we do animation. Every time timer ticks, repaint.
   public void actionPerformed (ActionEvent e) {
     repaint();
   }
