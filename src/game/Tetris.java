@@ -176,7 +176,7 @@ public class Tetris extends WinApp implements ActionListener {
       for (int i = 0; i < 4; i++) {
         G.V v = cds.a[i];
         if(v.x<0 || v.x>=W || v.y<0 || v.y>=H){return true;}
-        if(well[v.x][v.y] != iBkCol || well[v.x][v.y] != zap){return true;}
+        if(well[v.x][v.y] != iBkCol && well[v.x][v.y] != zap){return true;}
       }
       return false;
     }
