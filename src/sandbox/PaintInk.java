@@ -24,6 +24,7 @@ public class PaintInk extends WinApp {
     g.setColor(Color.BLACK);
     inkList.show(g);
     Ink.BUFFER.show(g);
+    g.drawString("Points: " + Ink.BUFFER.n, 600, 300);
   }
 
   //start drawing a line.

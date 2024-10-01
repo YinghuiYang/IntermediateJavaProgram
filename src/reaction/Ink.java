@@ -1,19 +1,25 @@
 package reaction;
 import graphics.G;
+import graphics.G.VS;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import music.*;
 
 public class Ink extends G.PL implements I.Show{
-
   public static Buffer BUFFER = new Buffer();
+  public static final int K = UC.normSampleSize;
+  public static G.VS temp = new G.VS(100, 100, 100, 100);
 
   public Ink(){
-    super(BUFFER.n);
-    for (int i = 0; i < BUFFER.n; i++){
-      points[i] = new G.V(BUFFER.points[i]);
-    }
+//    super(BUFFER.n);
+//    for (int i = 0; i < BUFFER.n; i++){
+//      points[i] = new G.V(BUFFER.points[i]);
+//    }
+    super(K);
+    BUFFER.subSample(this);
+    G.V.T.set(BUFFER.bbox, temp);
+    transform();
   }
 
   @Override
@@ -49,11 +55,18 @@ public class Ink extends G.PL implements I.Show{
     //up = mouse released. user finish drawing a line
     public void up(int x, int y) {add(x, y);}
 
-    @Override
     public boolean hit(int x, int y) {return true;}
 
-    @Override
     public void show(Graphics g) {bbox.draw(g); drawN(g, n);}
+
+    //since handwriting tends to slow down around corner, there would be a cluster of points around corner
+    //sampling every nth point can still preserve the corner shape
+    public void subSample(G.PL pl){
+      int k = pl.size();
+      for(int i = 0; i < k; i++){
+        pl.points[i].set(this.points[i*(n-1)/(k-1)]);
+      }
+    }
   }
 
 

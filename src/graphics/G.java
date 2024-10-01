@@ -40,8 +40,8 @@ public class G {
 
   //--------------V-------------------vector
   public static class V {
-
     public int x, y;
+    public static Transform T = new Transform();
 
     public V(int x, int y) {
       this.set(x, y);
@@ -65,12 +65,40 @@ public class G {
       x += v.x;
       y += v.y;
     }
+
+    //set up transform matrix
+    public void setT(V v){set(v.tx(), v.ty());}
+    public int tx(){return (x*T.n/T.d) + T.dx;}
+    public int ty(){return (y*T.n/T.d) + T.dy;}
+
+    //------------------------Transform--------------------------
+    public static class Transform{
+      //n = nominator, d = denominator
+      int dx, dy, n, d;
+      //old & new VS
+      public void set(VS oVS, VS nVS){
+        setScale(oVS.size.x, oVS.size.y, nVS.size.x, nVS.size.y);
+        dx = setOff(oVS.loc.x, nVS.loc.x);
+        dy = setOff(oVS.loc.y, nVS.loc.y);
+      }
+      public void set(BBox oBBox, VS nVS){
+        setScale(oBBox.h.size(), oBBox.v.size(), nVS.size.x, nVS.size.y);
+        dx = setOff(oBBox.h.lo, nVS.loc.x);
+        dy = setOff(oBBox.v.lo, nVS.loc.y);
+      }
+      public void setScale(int oW, int oH, int nW, int nH){
+        n = Math.max(nW, nH);
+        d = Math.max(oW, oH);
+      }
+      //set offset values
+      public int setOff(int oX, int nX){return -oX*n/d + nX;}
+    }
+
   }
 
   //--------------VS-------------------vectors
   //helper class for rectangles: starting location, width, height
   public static class VS {
-
     public V loc, size;
 
     public VS(int x, int y, int w, int h) {
@@ -166,9 +194,25 @@ public class G {
       for (int i = 1; i < n; i++) {
         g.drawLine(points[i - 1].x, points[i - 1].y, points[i].x, points[i].y);
       }
+      drawNDots(g, n);
     }
 
-    //need to correct
+    public void drawNDots(Graphics g, int n) {
+      g.setColor(Color.BLUE);
+      for (int i=0; i<n; i++){
+        g.drawOval(points[i].x-2, points[i].y-2, 4, 4);
+      }
+    }
+
     public void draw(Graphics g){drawN(g, this.size());}
+
+    public void transform(){
+//      for(int i=0; i<points.length; i++){
+//        points[i].setT(points[i]);
+//      }
+      for (V point : points) {
+        point.setT(point);
+      }
+    }
   }
 }
