@@ -25,6 +25,12 @@ public class PaintInk extends WinApp {
     inkList.show(g);
     Ink.BUFFER.show(g);
     g.drawString("Points: " + Ink.BUFFER.n, 600, 300);
+    if(inkList.size()>1){
+      int last = inkList.size()-1;
+      int dist = inkList.get(last).norm.dist(inkList.get(last-1).norm);
+      g.setColor(dist>UC.noMatchDist ? Color.RED:Color.BLACK);
+      g.drawString("Dist: " + dist, 600, 60);
+    }
   }
 
   //start drawing a line.
