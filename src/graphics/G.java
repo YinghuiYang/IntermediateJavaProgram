@@ -66,6 +66,11 @@ public class G {
       y += v.y;
     }
 
+    //update the existing average when adding a new value. k is the current number of elements
+    public void blend(V v, int k){
+      set((k*x+v.x)/(k+1), (k*y+v.y)/(k+1));
+    }
+
     //set up transform matrix
     public void setT(V v){set(v.tx(), v.ty());}
     public int tx(){return (x*T.n/T.d) + T.dx;}

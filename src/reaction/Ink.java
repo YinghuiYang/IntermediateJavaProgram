@@ -1,6 +1,5 @@
 package reaction;
 import graphics.G;
-import graphics.G.VS;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -64,6 +63,12 @@ public class Ink implements I.Show{
         res += (dx*dx + dy*dy);
       }
       return res;
+    }
+
+    public void blend(Norm norm, int nBlend){
+      for(int i=0; i<N; i++){
+        points[i].blend(norm.points[i], nBlend);
+      }
     }
   }
 
