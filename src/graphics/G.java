@@ -1,9 +1,10 @@
 package graphics;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.Random;
 
-public class G {
+public class G implements Serializable{
 
   public static Random RND = new Random();
 
@@ -39,7 +40,7 @@ public class G {
   }
 
   //--------------V-------------------vector
-  public static class V {
+  public static class V implements Serializable {
     public int x, y;
     public static Transform T = new Transform();
 
@@ -77,7 +78,7 @@ public class G {
     public int ty(){return (y*T.n/T.d) + T.dy;}
 
     //------------------------Transform--------------------------
-    public static class Transform{
+    public static class Transform implements Serializable{
       //n = nominator, d = denominator
       int dx, dy, n, d;
       //old & new VS
@@ -103,7 +104,7 @@ public class G {
 
   //--------------VS-------------------vectors
   //helper class for rectangles: starting location, width, height
-  public static class VS {
+  public static class VS implements Serializable {
     public V loc, size;
 
     public VS(int x, int y, int w, int h) {
@@ -146,7 +147,7 @@ public class G {
   }
 
   //--------------LoHi-------------------High Low range
-  public static class LoHi {
+  public static class LoHi implements Serializable{
     public int lo, hi;
 
     public LoHi(int lo, int hi) {this.lo = lo; this.hi = hi;}
@@ -163,7 +164,7 @@ public class G {
   }
 
   //--------------BBox-------------------Bonding box
-  public static class BBox {
+  public static class BBox implements Serializable{
     //horizontal & vertical bonds
     public LoHi h, v;
 
@@ -181,7 +182,7 @@ public class G {
   }
 
   //--------------PL-------------------poly line, a line connecting multiple points
-  public static class PL {
+  public static class PL implements Serializable{
     //array of points
     public V[] points;
 

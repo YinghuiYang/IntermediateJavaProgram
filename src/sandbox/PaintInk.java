@@ -13,6 +13,7 @@ import reaction.Shape.Prototype;
 public class PaintInk extends WinApp {
   public static Ink.List inkList = new Ink.List();
   public static Shape.Prototype.List pList = new Shape.Prototype.List();
+  public static String recognized = "";
 
   public PaintInk(){
     super("Paint Ink", UC.screenWidth, UC.screenHeight);
@@ -34,6 +35,7 @@ public class PaintInk extends WinApp {
       g.drawString("Dist: " + dist, 600, 60);
     }
     pList.show(g);
+    g.drawString(recognized, 700, 40);
   }
 
   //start drawing a line.
@@ -45,6 +47,9 @@ public class PaintInk extends WinApp {
   public void mouseReleased(MouseEvent me){
     Ink.BUFFER.up(me.getX(), me.getY());
     Ink ink = new Ink();
+    //can fail
+    Shape s = Shape.recognize(ink);
+    recognized = "recognized: " + (s!=null?s.name:"unrecognized");
     inkList.add(ink);
     Shape.Prototype proto;
     if(pList.bestDist(ink.norm) < UC.noMatchDist){

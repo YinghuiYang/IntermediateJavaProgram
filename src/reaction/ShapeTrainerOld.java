@@ -8,16 +8,15 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import music.UC;
 
-public class ShapeTrainer extends WinApp {
+public class ShapeTrainerOld extends WinApp {
   public static String UNKNOWN = " <- name currently unknown";
   public static String ILLEGAL = " <- this name NOT legal";
   public static String KNOWN = " <- known name";
   public static Shape.Prototype.List pList = null;
-
   public static String curName = "";
   public static String curState = ILLEGAL;
 
-  public ShapeTrainer() {
+  public ShapeTrainerOld() {
     super("Shape Trainer", UC.screenWidth, UC.screenHeight);
   }
 
@@ -50,6 +49,11 @@ public class ShapeTrainer extends WinApp {
   public void mouseDragged(MouseEvent me) {Ink.BUFFER.drag(me.getX(), me.getY()); repaint();}
 
   public void mouseReleased(MouseEvent me) {
+    Ink ink = new Ink();
+    Shape.DB.train(curName, ink.norm);
+    setState();
+    repaint();
+    /*
     if(curState != ILLEGAL){
       Ink ink = new Ink();
       Shape.Prototype proto;
@@ -68,6 +72,7 @@ public class ShapeTrainer extends WinApp {
       setState();
     }
     repaint();
+    */
   }
 
   public void keyTyped(KeyEvent ke){
@@ -75,13 +80,14 @@ public class ShapeTrainer extends WinApp {
     System.out.println("typed: " + c);
     //0x0D = carriage return char(enter key), 0x0A = line feed char
     //white space are illegal, reset curName
+    if(c == 0x0D || c == 0x0A){Shape.Database.save();}
     curName = (c == ' ' || c == 0x0D || c == 0x0A) ? "" : curName+c;
     setState();
     repaint();
   }
 
   public static void main(String[] args) {
-    PANEL = new ShapeTrainer();
+    PANEL = new ShapeTrainerOld();
     WinApp.launch();
   }
 }

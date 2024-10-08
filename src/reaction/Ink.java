@@ -2,6 +2,7 @@ package reaction;
 import graphics.G;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.io.Serializable;
 import java.util.ArrayList;
 import music.*;
 
@@ -36,7 +37,7 @@ public class Ink implements I.Show{
   }
 
   //----------------------------Norm----------------------normalized coordinate system
-  public static class Norm extends G.PL{
+  public static class Norm extends G.PL implements Serializable {
     public static final int N = UC.normSampleSize, MAX = UC.normCoordMax;
     //normalized coordinate system
     public static final G.VS NCS = new G.VS(0,0, MAX, MAX);
@@ -97,7 +98,10 @@ public class Ink implements I.Show{
 
     public boolean hit(int x, int y) {return true;}
 
-    public void show(Graphics g) {bbox.draw(g); drawN(g, n);}
+    public void show(Graphics g) {
+      // bbox.draw(g);
+      drawN(g, n);
+    }
 
     //since handwriting tends to slow down around corner, there would be a cluster of points around corner
     //sampling every nth point can still preserve the corner shape

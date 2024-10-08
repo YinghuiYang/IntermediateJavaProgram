@@ -3,15 +3,23 @@ package reaction;
 import graphics.G;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.event.KeyEvent;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TreeMap;
 import music.I;
 import music.UC;
 
-public class Shape {
+public class Shape implements Serializable {
   public static Shape.Database DB = Shape.Database.load();
   public static Shape DOT = DB.get("DOT");
+  public static Trainer TRAINER = new Trainer();
   // LIST will always be up to date with DB, supported by language feature
   public static Collection<Shape> LIST = DB.values();
 
@@ -38,17 +46,54 @@ public class Shape {
 
   //------------------------------Database---------------------------------------
   // TreeMap sort the keys. HashMap does not sort keys.
-  public static class Database extends TreeMap<String, Shape> {
+  public static class Database extends TreeMap<String, Shape> implements Serializable {
+    private static String fileName = UC.shapeDatabaseFileName;
+
+    private Database() {
+      super();
+      String dot = "DOT";
+      put(dot, new Shape(dot));
+    }
+
+    private Shape forceGet(String name){
+      if(!DB.containsKey(name)){
+        DB.put(name, new Shape(name));
+      }
+      return DB.get(name);
+    }
+
+    public void train(String name, Ink.Norm norm){
+      if(isLegal(name)){
+        forceGet(name).prototypes.train(norm);
+      }
+    }
 
     public static Database load(){
-      Database res = new Database();
-      //stub
-      res.put("DOT", new Shape("DOT"));
+      Database res;
+      try {
+        System.out.println("loading database: " + fileName);
+        ObjectInputStream ois = new ObjectInputStream(new FileInputStream(fileName));
+        res = (Database)ois.readObject();
+        System.out.println("Successfully load: " + res.keySet());
+        ois.close();
+      } catch (Exception e) {
+        System.out.println("Error loading database: " + fileName);
+        System.out.println(e);
+        res = new Database();
+      }
       return res;
     }
 
     public static void save(){
-      //stub
+      try{
+        ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(fileName));
+        oos.writeObject(DB);
+        System.out.println("Successfully save: " + fileName);
+        oos.close();
+      } catch(Exception e){
+        System.out.println("Error saving database: " + fileName);
+        System.out.println(e);
+      }
     }
 
     public boolean isKnown(String name){return containsKey(name);}
@@ -59,7 +104,7 @@ public class Shape {
   }
 
   //--------------------------Prototype--------------------represent one way of drawing a shape, like a circle can be drawn clockwise or counterclockwise
-  public static class Prototype extends Ink.Norm {
+  public static class Prototype extends Ink.Norm implements Serializable{
     public int nBlend;
 
     public void blend(Ink.Norm norm){
@@ -68,7 +113,7 @@ public class Shape {
     }
 
     //------------------------------List---------------------------
-    public static class List extends ArrayList<Prototype> implements I.Show{
+    public static class List extends ArrayList<Prototype> implements I.Show, Serializable {
       //set as side effect of bestDist()
       public static Prototype bestMatch;
 
@@ -83,6 +128,14 @@ public class Shape {
           }
         }
         return bestSoFar;
+      }
+
+      public void train(Ink.Norm norm){
+        if(bestDist(norm) < UC.noMatchDist){
+          bestMatch.blend(norm);
+        } else {
+          add(new Shape.Prototype());
+        }
       }
 
       //debug purpose
@@ -102,4 +155,58 @@ public class Shape {
     }
   }
 
+  //--------------------------Trainer--------------------------
+  public static class Trainer implements I.Show, Serializable {
+    public static String UNKNOWN = " <- name currently unknown";
+    public static String ILLEGAL = " <- this name NOT legal";
+    public static String KNOWN = " <- known name";
+    public static Shape.Prototype.List pList = null;
+    public static String curName = "";
+    public static String curState = ILLEGAL;
+
+    private Trainer(){}
+
+    public void show(Graphics g){
+      G.bgWhite(g);
+      g.setColor(Color.BLACK);
+      g.drawString(curName, 600,30);
+      g.drawString(curState, 700,30);
+      g.setColor(Color.RED);
+      Ink.BUFFER.show(g);
+      if(pList != null){
+        pList.show(g);
+      }
+    }
+
+    public boolean hit(int x, int y){return true;}
+
+    public void dn(int x, int y){Ink.BUFFER.dn(x, y);}
+    public void drag(int x, int y){Ink.BUFFER.drag(x, y);}
+    public void up(int x, int y){
+      Ink.BUFFER.up(x, y);
+      Ink ink = new Ink();
+      Shape.DB.train(curName, ink.norm);
+      setState();
+    }
+
+
+    public void setState() {
+      curState = !Shape.DB.isLegal(curName) ? ILLEGAL : UNKNOWN;
+      if (curState == UNKNOWN) {
+        if(Shape.DB.isKnown(curName)){
+          curState = KNOWN;
+          pList = Shape.DB.get(curName).prototypes;
+        } else {
+          pList = null;
+        }
+      }
+    }
+
+    public void keyTyped(KeyEvent ke){
+      char c = ke.getKeyChar();
+      if(c == 0x0D || c == 0x0A){Shape.DB.save();}
+      curName = (c == ' ' || c == 0x0D || c == 0x0A) ? "":curName+c;
+      setState();
+    }
+  }
 }
