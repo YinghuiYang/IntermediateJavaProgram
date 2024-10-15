@@ -36,6 +36,11 @@ public abstract class Reaction implements I.React{
     return byShape.getList(g.shape).lowBid(g);
   }
 
+  public static void nuke(){
+    byShape = new Map();
+    initialReactions.enable();
+  }
+
   //----------------List--------------------------
   public static class List extends ArrayList<Reaction> {
     public void addReaction(Reaction r){
@@ -67,8 +72,13 @@ public abstract class Reaction implements I.React{
       }
       return res;
     }
-  }
 
+    public void enable(){
+      for(Reaction r : this){
+        r.enable();
+      }
+    }
+  }
 
   //---------------------------Map-------------------------------
   public static class Map extends HashMap<Shape, List> {

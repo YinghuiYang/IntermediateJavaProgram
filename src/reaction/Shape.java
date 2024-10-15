@@ -7,7 +7,6 @@ import java.awt.event.KeyEvent;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -139,7 +138,7 @@ public class Shape implements Serializable {
       }
 
       //debug purpose
-      private static int m = 10, w = 60; //m for margin, w for width
+      private static int m = 10, w = 60, showBoxHeight = m+w; //m for margin, w for width
       private static G.VS showBox = new G.VS(m, m, w, w);
       @Override
       public void show(Graphics g) {
@@ -156,7 +155,7 @@ public class Shape implements Serializable {
   }
 
   //--------------------------Trainer--------------------------
-  public static class Trainer implements I.Show, Serializable {
+  public static class Trainer implements I.Show, I.Area, Serializable {
     public static String UNKNOWN = " <- name currently unknown";
     public static String ILLEGAL = " <- this name NOT legal";
     public static String KNOWN = " <- known name";
@@ -183,6 +182,9 @@ public class Shape implements Serializable {
     public void dn(int x, int y){Ink.BUFFER.dn(x, y);}
     public void drag(int x, int y){Ink.BUFFER.drag(x, y);}
     public void up(int x, int y){
+      if(removePrototype(x, y)){
+        return;
+      }
       Ink.BUFFER.up(x, y);
       Ink ink = new Ink();
       Shape.DB.train(curName, ink.norm);
@@ -200,6 +202,20 @@ public class Shape implements Serializable {
           pList = null;
         }
       }
+    }
+
+    private boolean removePrototype(int x, int y){
+      int H = Prototype.List.showBoxHeight;
+      if(y<H){
+        int ndx = x/H;
+        Prototype.List pList = TRAINER.pList;
+        if(pList != null && ndx < pList.size()){
+          pList.remove(ndx);
+          Ink.BUFFER.clear();
+          return true;
+        }
+      }
+      return false;
     }
 
     public void keyTyped(KeyEvent ke){

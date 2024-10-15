@@ -213,12 +213,23 @@ public class G implements Serializable{
     public void draw(Graphics g){drawN(g, this.size());}
 
     public void transform(){
-//      for(int i=0; i<points.length; i++){
-//        points[i].setT(points[i]);
-//      }
       for (V point : points) {
         point.setT(point);
       }
     }
+  }
+
+  //------------------HC----------------------- hierarchy coordinates
+  public static class HC{
+    public static HC ZERO = new HC(null, 0);
+    public HC dad;
+    public int dv;  //delta value
+
+    public HC(HC dad, int dv){
+      this.dad = dad;
+      this.dv = dv;
+    }
+
+    public int v(){return dad == ZERO ? 0 : dad.v()+dv;}
   }
 }

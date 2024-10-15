@@ -26,4 +26,9 @@ public class Layer extends ArrayList<I.Show> implements I.Show {
     }
   }
 
+  public static void nuke(){
+    for(I.Show item : ALL) {
+      ((Layer)item).clear();
+    }
+  }
 }
