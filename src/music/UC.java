@@ -11,4 +11,7 @@ public class UC {
   public static final int dotThreshHold = 5;
   public static final String shapeDatabaseFileName = "ShapeDB.dat";
   public static final int noBid = 10000;
+  public static final int minStaffGap = 40;
+  public static final int minSysGap = 40;
+  public static final int barToMarginSnap = 20;
 }

@@ -6,10 +6,10 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.GenericArrayType;
 import reaction.Gesture;
 import reaction.Ink;
 import reaction.Layer;
+import reaction.Reaction;
 import reaction.Shape;
 
 // music editor
@@ -21,6 +21,16 @@ public class MusicEd extends WinApp {
 
   public MusicEd(){
     super("Music Editor", UC.screenWidth, UC.screenHeight);
+
+    Reaction.initialReactions.addReaction(new Reaction("W-W") {
+      public int bid(Gesture g) {return 0;}
+
+      public void act(Gesture g) {
+        int y = g.vs.yM();
+        PAGE = new Page(y);
+        this.disable();
+      }
+    });
   }
 
   public void paintComponent(Graphics g){

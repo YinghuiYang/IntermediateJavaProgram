@@ -230,6 +230,6 @@ public class G implements Serializable{
       this.dv = dv;
     }
 
-    public int v(){return dad == ZERO ? 0 : dad.v()+dv;}
+    public int v(){return dad == ZERO ? dv : dad.v()+dv;}
   }
 }
