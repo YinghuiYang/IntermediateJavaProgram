@@ -45,6 +45,31 @@ public class Bar extends Mass {
         Bar.this.cycleType();
       }
     });
+
+    addReaction(new Reaction("DOT") { //toggle repeat
+
+      @Override
+      public void act(Gesture g) {
+        if(g.vs.xM() < Bar.this.x){
+          Bar.this.toggleLeft();
+        } else {
+          Bar.this.toggleRight();
+        }
+      }
+
+      @Override
+      public int bid(Gesture g) {
+        int x = g.vs.xM(), y = g.vs.yM();
+        if(y<Bar.this.sys.yTop() || y>Bar.this.sys.yBot()){
+          return UC.noBid;
+        }
+        int dist = Math.abs(x-Bar.this.x);
+        if(dist > 3*sys.page.maxH){
+          return UC.noBid;
+        }
+        return dist;
+      }
+    });
   }
 
   //cycleType is not always called, so barType could be other values than (0,1,2)
@@ -64,9 +89,52 @@ public class Bar extends Mass {
   }
 
   public void show(Graphics g){
-    g.setColor(barType == 1 ? Color.RED:Color.BLACK);
-    for(Staff staff : sys.staffs){
-      g.drawLine(x, staff.yTop(), x, staff.yBot());
+//    g.setColor(barType == 1 ? Color.RED:Color.BLACK);
+//    for(Staff staff : sys.staffs){
+//      g.drawLine(x, staff.yTop(), x, staff.yBot());
+//    }
+    int sysTop = sys.yTop(), y1 = 0, y2 = 0;
+    boolean justSawBreak = true;
+    for(int i=0; i<sys.staffs.size(); i++){
+      Staff staff = sys.staffs.get(i);
+      int staffTop = staff.yTop();
+      if(justSawBreak){
+        y1 = staffTop;
+      }
+      y2 = staff.yBot();
+      justSawBreak = !staff.fmt.barContinues;
+      if(justSawBreak){
+        drawLines(g, x, y1, y2);
+      }
+      if(barType>3){
+        drawDots(g, x, staffTop);
+      }
+    }
+  }
+
+  public void drawLines(Graphics g, int x, int y1, int y2){
+    int H = sys.page.maxH;
+    if(barType==0){
+      fineBar(g, x, y1, y2);
+    }
+    if(barType==1){
+      fineBar(g, x, y1, y2);
+      fineBar(g, x-H, y1, y2);
+    }
+    if(barType==2){
+      fatBar(g, x-H, y1, y2, H);
+      fineBar(g, x-2*H, y1, y2);
+    }
+    if(barType>=4){
+      fatBar(g, x-H, y1, y2, H);
+      if((barType&LEFT)!=0){
+        fineBar(g, x-2*H, y1, y2);
+        wings(g, x-2*H, y1, y2, -H, H);
+      }
+      if((barType&RIGHT)!=0){
+        fineBar(g, x+H, y1, y2);
+        wings(g, x+H, y1, y2, H, H);
+      }
     }
   }
 

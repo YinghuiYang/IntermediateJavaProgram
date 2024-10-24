@@ -12,15 +12,16 @@ public class Staff extends Mass {
   public Sys sys;
   public int iStaff;
   public G.HC staffTop;
-  public Staff.Fmt fmt = Fmt.DEFAULT; //fmt = format
+  public Staff.Fmt fmt; //fmt = format
 
-  public Staff(Sys sys, int iStaff, G.HC staffTop) {
+  public Staff(Sys sys, int iStaff, G.HC staffTop, Staff.Fmt fmt) {
     super("BACK");
     this.sys = sys;
     this.iStaff = iStaff;
     this.staffTop = staffTop;
+    this.fmt = fmt;
 
-    addReaction(new Reaction("S-S") {
+    addReaction(new Reaction("S-S") {   //create new bar
       @Override
       public int bid(Gesture g) {
         Page PAGE = sys.page;
@@ -38,6 +39,50 @@ public class Staff extends Mass {
         new Bar(Staff.this.sys, g.vs.xM());
       }
     });
+
+    addReaction(new Reaction("S-S") { //toggle bar continue
+      @Override
+      public void act(Gesture g) {
+        fmt.toggleBarContinues();
+      }
+
+      @Override
+      public int bid(Gesture g) {
+        if(Staff.this.sys.iSys != 0){
+          return UC.noBid;
+        }
+        int y1 = g.vs.yL(), y2 = g.vs.yH();
+        if(iStaff == sys.staffs.size()-1){
+          return UC.noBid;
+        }
+        if(Math.abs(y1-yBot()) > 20){
+          return UC.noBid;
+        }
+        Staff nextStaff = sys.staffs.get(iStaff+1);
+        if(Math.abs(y2-nextStaff.yTop()) > 20){
+          return UC.noBid;
+        }
+        return 10;
+      }
+
+    });
+
+    addReaction(new Reaction("SW-SW") {
+      @Override
+      public void act(Gesture g) {
+        new Head(Staff.this, g.vs.xM(), g.vs.yM());
+      }
+
+      @Override
+      public int bid(Gesture g) {
+        Page PAGE = sys.page;
+        int x = g.vs.xM(), y = g.vs.yM();
+        if(x < PAGE.margins.left || x > PAGE.margins.right) {return UC.noBid;}
+        int H = Staff.this.fmt.H, top = Staff.this.yTop() - H, bot = Staff.this.yBot() + H;
+        if(y < top || y > bot){return UC.noBid;}
+        return 10;
+      }
+    });
   }
 
   public int yTop(){return staffTop.v();}
@@ -48,7 +93,7 @@ public class Staff extends Mass {
 
   public Staff copy(Sys newSys){
     G.HC hc = new G.HC(newSys.staffs.sysTop, staffTop.dv);
-    return new Staff(newSys, iStaff, hc);
+    return new Staff(newSys, iStaff, hc, fmt);
   }
 
   public void show(Graphics g){
@@ -61,6 +106,8 @@ public class Staff extends Mass {
 
   //------------------------Fmt----------------------format
   public static class Fmt{
+    public boolean barContinues = false;
+
     public static Fmt DEFAULT = new Fmt(5, 8);
 
     public int nLines;  //5 lines on staff
@@ -70,6 +117,8 @@ public class Staff extends Mass {
       this.nLines = nLines;
       this.H = H;
     }
+
+    public void toggleBarContinues(){barContinues = !barContinues;}
   }
 
   //------------------------------List-----------------------------

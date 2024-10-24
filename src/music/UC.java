@@ -14,4 +14,6 @@ public class UC {
   public static final int minStaffGap = 40;
   public static final int minSysGap = 40;
   public static final int barToMarginSnap = 20;
+  public static final String FontName = "sinfonia";
+  public static final int snapTime = 30;
 }
