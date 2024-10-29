@@ -45,7 +45,6 @@ public class Sys extends Mass {
   public void addNewStaff(int y){
     int off = y - staffs.sysTop();  //offset
     G.HC staffTop = new G.HC(staffs.sysTop, off);
-    // stub: need double check
     staffs.add(new Staff(this, staffs.size(), staffTop, new Staff.Fmt(5, 8)));
     page.updateMaxH();
   }

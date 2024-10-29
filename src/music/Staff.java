@@ -64,7 +64,6 @@ public class Staff extends Mass {
         }
         return 10;
       }
-
     });
 
     addReaction(new Reaction("SW-SW") {
@@ -83,11 +82,50 @@ public class Staff extends Mass {
         return 10;
       }
     });
+
+    //W-S add quarter rest
+    addReaction(new Reaction("W-S") {
+      public int bid(Gesture g) {
+        int x = g.vs.xM(), y = g.vs.yM();
+        if(x < sys.page.margins.left || x > sys.page.margins.right) {return UC.noBid;}
+        int H = fmt.H, top = yTop() - H, bot = yBot() + H;
+        if(y < top || y > bot){return UC.noBid;}
+        return 10;
+      }
+
+      public void act(Gesture g) {
+        Time t = Staff.this.sys.getTime(g.vs.xM());
+        //need to check whether a REST already exists
+        new Rest(Staff.this, t);
+      }
+    });
+
+    addReaction(new Reaction("E-S") {
+      public int bid(Gesture g) {
+        int x = g.vs.xM(), y = g.vs.yM();
+        if(x < sys.page.margins.left || x > sys.page.margins.right) {return UC.noBid;}
+        int H = fmt.H, top = yTop() - H, bot = yBot() + H;
+        if(y < top || y > bot){return UC.noBid;}
+        return 10;
+      }
+
+      public void act(Gesture g) {
+        Time t = Staff.this.sys.getTime(g.vs.xM());
+        //need to check whether a REST already exists
+        (new Rest(Staff.this, t)).nFlag = 1;
+      }
+    });
   }
 
   public int yTop(){return staffTop.v();}
 
   public int yOfLine(int line){return yTop() + line*fmt.H;}
+
+  public int lineOfY(int y){
+    int H = fmt.H, bias = 100;
+    int top = yTop() - H*bias;
+    return (y - top + H/2)/H - bias;
+  }
 
   public int yBot(){return yOfLine(2 * (fmt.nLines - 1));}
 

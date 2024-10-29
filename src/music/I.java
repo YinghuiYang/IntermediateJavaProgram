@@ -18,7 +18,7 @@ public interface I {
     public void up(int x, int y);
   }
 
-  public interface Act{ public void act(Gesture g);}
+  public interface Act{public void act(Gesture g);}
 
-  public interface React extends Act{ public int bid(Gesture g);}
+  public interface React extends Act{public int bid(Gesture g);}
 }
