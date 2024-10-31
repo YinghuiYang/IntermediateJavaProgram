@@ -121,6 +121,7 @@ public class Staff extends Mass {
 
   public int yOfLine(int line){return yTop() + line*fmt.H;}
 
+  //addition of H/2 will turn truncation to rounding. the bias will make the negative number rounded correctly
   public int lineOfY(int y){
     int H = fmt.H, bias = 100;
     int top = yTop() - H*bias;

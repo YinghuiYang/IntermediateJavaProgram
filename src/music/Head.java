@@ -1,12 +1,13 @@
 package music;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import reaction.Gesture;
 import reaction.Mass;
 import reaction.Reaction;
 
-public class Head extends Mass {
+public class Head extends Mass implements Comparable<Head> {
   public Staff staff;
   public int line;
   public Time time;
@@ -46,6 +47,21 @@ public class Head extends Mass {
         }
       }
     });
+
+    addReaction(new Reaction("DOT") {
+      public int bid(Gesture g) {
+        int xH = x(), yH = y(), H = staff.fmt.H, w = w();
+        int x = g.vs.xM(), y = g.vs.yM();
+        if(x < xH || x > xH+2*w || y < yH-H || y > yH+H){return UC.noBid;}
+        return Math.abs(xH+w-x) + Math.abs(yH-y);
+      }
+
+      public void act(Gesture g) {
+        if(Head.this.stem != null){
+          Head.this.stem.cycleDot();
+        }
+      }
+    });
   }
 
   //width
@@ -54,15 +70,42 @@ public class Head extends Mass {
   }
 
   public void show(Graphics g) {
+//    g.setColor(wrongSide ? Color.GREEN : Color.BLUE);
+//    if(stem!=null && stem.heads.size() != 0 && this == stem.firstHead()){
+//      g.setColor(Color.RED);
+//    }
     int H = staff.fmt.H;
-    (forcedGlyph!=null ? forcedGlyph : normalGlyph()).showAt(g,H, time.x, staff.yTop() + line*H);
+    (forcedGlyph!=null ? forcedGlyph : normalGlyph()).showAt(g,H, x(), y());
+    if(stem != null){
+      int off = UC.argDotOffset, sp = UC.argDotSpacing;
+      for(int i = 0; i < stem.nDot; i++){
+        g.fillOval(time.x+off+i*sp, y()-3*H/2, H*2/3, H*2/3);
+      }
+    }
   }
 
-  public Glyph normalGlyph() {return Glyph.HEAD_Q;}
+  public Glyph normalGlyph() {
+    if(stem == null){
+      return Glyph.HEAD_Q;
+    }
+    if(stem.nFlag == -1){
+      return Glyph.HEAD_HALF;
+    }
+    if(stem.nFlag == -2){
+      return Glyph.HEAD_W;
+    }
+    return Glyph.HEAD_Q;
+  }
 
   public int y(){return staff.yOfLine(line);}
 
-  public int x(){return time.x;}
+  public int x(){
+    int res =  time.x;
+    if(wrongSide){
+      res += (stem != null && stem.isUp) ? w() : -w();
+    }
+    return res;
+  }
 
   //stub: since we need to delete all reference, not just here
   public void delete(){time.heads.remove(this);}
@@ -80,6 +123,11 @@ public class Head extends Mass {
     if(stem != null) {unStem();}
     s.heads.add(this);
     stem = s;
+  }
+
+  @Override
+  public int compareTo(Head h) {
+    return (staff.iStaff != h.staff.iStaff) ? staff.iStaff - h.staff.iStaff : line-h.line;
   }
 
   //---------------------------------List-------------------------

@@ -28,6 +28,7 @@ public class Time {
       System.out.println("Empty stem heads after stemming");
     } else {
       s.setWrongSide();
+      s.staff.sys.stems.addStem(s);
     }
   }
 

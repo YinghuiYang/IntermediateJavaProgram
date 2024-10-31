@@ -14,6 +14,7 @@ public class Sys extends Mass {
   public int iSys;
   public Staff.List staffs;
   public Time.List times;
+  public Stem.List stems = new Stem.List();
 
   public Sys(Page page, G.HC sysTop) {
     super("BACK");

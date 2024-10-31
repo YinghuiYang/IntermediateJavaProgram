@@ -57,8 +57,8 @@ public class Glyph{
     g.setFont(theFont);
     g.drawString(""+code, x + (int)Math.floor(dx*H), y + (int)Math.floor(dy*H));
     //the red box is to show where the font actual location is
-    g.setColor(Color.RED);
-    g.drawRect(x, y, H, H);
+//    g.setColor(Color.RED);
+//    g.drawRect(x, y, H, H);
     g.setFont(f); // restore old font
   }
 }
