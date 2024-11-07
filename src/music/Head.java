@@ -11,7 +11,7 @@ public class Head extends Mass implements Comparable<Head> {
   public Staff staff;
   public int line;
   public Time time;
-  public Glyph forcedGlyph; //in case we need to use a special music head note
+  public Glyph forcedGlyph; //in case we need to use a special music headnote
   public Stem stem = null;
   public boolean wrongSide = false;
 
@@ -41,7 +41,8 @@ public class Head extends Mass implements Comparable<Head> {
         int w = Head.this.w();
         boolean up = x>(t.x + w/2);
         if(Head.this.stem == null){
-          t.stemHeads(staff, up, y1, y2);
+          // t.stemHeads(staff, up, y1, y2);
+          Stem.getStem(staff, t, y1, y2, up);
         } else{
           t.unStemHeads(y1,y2);
         }
