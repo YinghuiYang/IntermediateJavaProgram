@@ -18,4 +18,5 @@ public class UC {
   public static final int snapTime = 30;
   public static final int argDotOffset = 28;
   public static final int argDotSpacing = 11;
+  public static final int initialClefOffset = 30;
 }

@@ -61,7 +61,13 @@ public class MusicEd extends WinApp {
     Layer.ALL.show(g);
     g.drawString(Gesture.recognized, 900, 30);
     if (PAGE != null) {
-      Glyph.CLEF_G.showAt(g, 8, 100, PAGE.margins.top+4*8);
+      Staff staff = PAGE.sysList.get(0).staffs.get(0);
+      Key.drawOnStaff(g, 7 , Key.fF,110, Glyph.FLAT, staff);
+//      Glyph.SHARP.showAt(g, 8, 100, PAGE.margins.top+4*8);
+//      Glyph.FLAT.showAt(g, 8, 200, PAGE.margins.top+4*8);
+//      Glyph.NATURAL.showAt(g, 8, 300, PAGE.margins.top+4*8);
+//      Glyph.DFLAT.showAt(g, 8, 400, PAGE.margins.top+4*8);
+//      Glyph.DSHARP.showAt(g, 8, 500, PAGE.margins.top+4*8);
 //      Glyph.HEAD_W.showAt(g, 8, 200, PAGE.margins.top+4*8);
 //      int H = 32;
 //      Glyph.HEAD_Q.showAt(g, H, 200, PAGE.margins.top+4*H);

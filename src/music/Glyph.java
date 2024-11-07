@@ -35,6 +35,12 @@ public class Glyph{
   public static Glyph REST_3F = new Glyph((char)61504, 16, 0, 4);
   public static Glyph REST_4F = new Glyph((char)61505, 16, 0, 4);
 
+  public static Glyph NATURAL = new Glyph((char)61511, 16, 0, 5);
+  public static Glyph FLAT = new Glyph((char)61512, 16, 0, 4);
+  public static Glyph SHARP = new Glyph((char)61513, 16, 0, 5);
+  public static Glyph DFLAT = new Glyph((char)61514, 16, 0, 4); //double flat
+  public static Glyph DSHARP = new Glyph((char)61515, 16, 0, 7);
+
   public static int theSize = -1;
   public static Font theFont;
 
@@ -53,7 +59,7 @@ public class Glyph{
       theSize = size;
     }
     Font f = g.getFont(); // fetch old font so that we can restore it
-    g.setColor(Color.BLACK);
+//    g.setColor(Color.BLACK);
     g.setFont(theFont);
     g.drawString(""+code, x + (int)Math.floor(dx*H), y + (int)Math.floor(dy*H));
     //the red box is to show where the font actual location is

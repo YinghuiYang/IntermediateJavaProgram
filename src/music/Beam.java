@@ -25,7 +25,7 @@ public class Beam extends Mass {
     return stems.get(stems.size()-1);
   }
 
-  public void deleteStem(){
+  public void deleteBeam(){
     for (Stem s : stems){
       s.beam = null;
     }
@@ -51,6 +51,15 @@ public class Beam extends Mass {
   public void show(Graphics g){
     g.setColor(Color.BLACK);
     drawBeamGroup(g);
+  }
+
+  public void removeStem(Stem stem) {
+    if(stem == first() || stem == last()){
+      deleteBeam();
+    }else{
+      stems.remove(stem);
+      stems.sort();;
+    }
   }
 
   private void drawBeamGroup(Graphics g){
@@ -142,4 +151,5 @@ public class Beam extends Mass {
       return y2<y && y<y1;
     }
   }
+
 }

@@ -50,6 +50,9 @@ public class Stem extends Duration implements Comparable<Stem> {
 
       public void act(Gesture g) {
         Stem.this.decFlag();
+        if(nFlag == 0 && beam != null){
+          beam.deleteBeam();
+        }
       }
     });
   }
@@ -106,11 +109,17 @@ public class Stem extends Duration implements Comparable<Stem> {
   }
 
   public int yFirstHead(){
+    if(heads.size() == 0){
+      return 200;
+    }
     Head h = firstHead();
     return h.staff.yOfLine(h.line);
   }
 
   public int yBeamEnd(){
+    if(heads.size() == 0){
+      return 100;
+    }
     if(isInternalStem()){
       beam.setMasterBeam();
       return Beam.yOfX(x());
@@ -131,12 +140,18 @@ public class Stem extends Duration implements Comparable<Stem> {
   }
 
   public int x(){
+    if(heads.size() == 0){
+      return 100;
+    }
     Head h = firstHead();
     return h.time.x + (isUp ? h.w() : 0);
   }
 
   public void deleteStem() {
     staff.sys.stems.remove(this);
+    if(beam != null){
+      beam.removeStem(this);
+    }
     deleteMass();
   }
 

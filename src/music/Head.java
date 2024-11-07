@@ -75,6 +75,7 @@ public class Head extends Mass implements Comparable<Head> {
 //    if(stem!=null && stem.heads.size() != 0 && this == stem.firstHead()){
 //      g.setColor(Color.RED);
 //    }
+    g.setColor(stem==null ? Color.BLUE:Color.BLACK);
     int H = staff.fmt.H;
     (forcedGlyph!=null ? forcedGlyph : normalGlyph()).showAt(g,H, x(), y());
     if(stem != null){
@@ -82,6 +83,7 @@ public class Head extends Mass implements Comparable<Head> {
       for(int i = 0; i < stem.nDot; i++){
         g.fillOval(time.x+off+i*sp, y()-3*H/2, H*2/3, H*2/3);
       }
+      g.setColor(Color.BLACK);
     }
   }
 
