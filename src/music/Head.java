@@ -14,6 +14,7 @@ public class Head extends Mass implements Comparable<Head> {
   public Glyph forcedGlyph; //in case we need to use a special music headnote
   public Stem stem = null;
   public boolean wrongSide = false;
+  public Accid accid = null;
 
   public Head(Staff staff, int x, int y) {
     super("NOTE");
@@ -63,6 +64,68 @@ public class Head extends Mass implements Comparable<Head> {
         }
       }
     });
+
+    addReaction(new Reaction("NE-SE") { //up arrow, create sharp
+      public int bid(Gesture g) {
+        int x = g.vs.xM(), y = g.vs.yL(); //center top for gesture up-arrow
+        int hx = Head.this.x() + Head.this.w()/2, hy = Head.this.y();
+        int dx = Math.abs(x - hx), dy = Math.abs(y - hy), diff = dx+dy;
+        return diff < 50 ? diff : UC.noBid;
+      }
+
+      public void act(Gesture g) {
+        Head.this.accidUp();
+      }
+    });
+
+    addReaction(new Reaction("SE-NE") { //down arrow, create sharp
+      public int bid(Gesture g) {
+        int x = g.vs.xM(), y = g.vs.yH(); //center bottom for gesture down-arrow
+        int hx = Head.this.x() + Head.this.w()/2, hy = Head.this.y();
+        int dx = Math.abs(x - hx), dy = Math.abs(y - hy), diff = dx+dy;
+        return diff < 50 ? diff : UC.noBid;
+      }
+
+      public void act(Gesture g) {
+        Head.this.accidDn();
+      }
+    });
+
+    addReaction(new Reaction("S-N") {
+      public int bid(Gesture g) {
+        int x = g.vs.xM(), y = g.vs.yL();
+        int hx = Head.this.x() + Head.this.w()/2, hy = Head.this.y();
+        int dx = Math.abs(x-hx), dy = Math.abs(y-hy), dist = dx+dy;
+        return dist > 50 ? UC.noBid : dist;
+      }
+      public void act(Gesture g) {
+        Head.this.deleteHead();
+      }
+    });
+  }
+
+  public void deleteHead() {
+    if(this.accid != null){
+      accid.deleteAccid();
+    }
+    unStem();
+    deleteMass();
+  }
+
+  private void accidUp() {
+    if(accid == null){
+      accid = new Accid(this, Accid.SHARP);
+      return;
+    }
+    if(accid.iGlyph < 4){accid.iGlyph++;}
+  }
+
+  private void accidDn() {
+    if(accid == null){
+      accid = new Accid(this, Accid.FLAT);
+      return;
+    }
+    if(accid.iGlyph > 0){accid.iGlyph--;}
   }
 
   //width

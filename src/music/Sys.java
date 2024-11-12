@@ -17,6 +17,7 @@ public class Sys extends Mass {
   public Staff.List staffs;
   public Time.List times;
   public Stem.List stems = new Stem.List();
+  public Key initialKey = new Key();
 
   public Sys(Page page, G.HC sysTop) {
     super("BACK");
@@ -70,12 +71,59 @@ public class Sys extends Mass {
         }
       }
     });
+
+    addReaction(new Reaction("E-E") {
+      public int bid(Gesture g) {
+        int x = page.margins.left;
+        int x1 = g.vs.xL(), x2 = g.vs.xH();
+        if(x1>x || x2<x){return UC.noBid;}
+        int y = g.vs.yM();
+        if(y<yTop() || y>yBot()){
+          return UC.noBid;
+        }
+        return Math.abs(x-(x1+x2)/2);
+      }
+
+      public void act(Gesture g) {
+        Sys.this.incKey();
+      }
+    });
+
+    addReaction(new Reaction("W-W") {
+      public int bid(Gesture g) {
+        int x = page.margins.left;
+        int x1 = g.vs.xL(), x2 = g.vs.xH();
+        if(x1>x || x2<x){return UC.noBid;}
+        int y = g.vs.yM();
+        //since 0-0 is the top left screen, y-positive direction is downward, yTop would smaller than yBot
+        //y<yTop means y is too high, y>yBot means y is too low
+        if(y<yTop() || y>yBot()){
+          return UC.noBid;
+        }
+        return Math.abs(x-(x1+x2)/2);
+      }
+
+      public void act(Gesture g) {
+        Sys.this.decKey();
+      }
+    });
+  }
+
+  public void incKey() {
+    if(initialKey.n < 7){initialKey.n++;}
+    initialKey.glyph = initialKey.n >= 0 ? Glyph.SHARP:Glyph.FLAT;
+  }
+
+  public void decKey() {
+    if(initialKey.n > -7){initialKey.n--;}
+    initialKey.glyph = initialKey.n >= 0 ? Glyph.SHARP:Glyph.FLAT;
   }
 
   public Time getTime(int x){
     return times.getTime(x);
   }
 
+  //since 0-0 is the top left screen, y-positive direction is downward, yTop would smaller than yBot
   public int yTop(){return staffs.sysTop();}
 
   public int yBot(){return staffs.get(staffs.size()-1).yBot();}
@@ -93,6 +141,8 @@ public class Sys extends Mass {
     int x = page.margins.left;
     g.drawLine(x, yTop(), x, yBot());
     page.show(g);
+    int xKey = x + UC.marginKeyOffset;
+    initialKey.drawOnSys(g, this, xKey);
   }
 
   //-------------List------------------

@@ -14,8 +14,10 @@ public class Bar extends Mass {
   2: fine (Italian word for music term, means end)
   if either right or left, it repeats
    */
+
   public Sys sys;
   public int x, barType=0;
+  public Key key = null;
 
   public Bar(Sys sys, int x){
     super("BACK");
@@ -47,7 +49,6 @@ public class Bar extends Mass {
     });
 
     addReaction(new Reaction("DOT") { //toggle repeat
-
       @Override
       public void act(Gesture g) {
         if(g.vs.xM() < Bar.this.x){
@@ -70,6 +71,83 @@ public class Bar extends Mass {
         return dist;
       }
     });
+
+    addReaction(new Reaction("E-E") {   //increments key on double bar
+      public int bid(Gesture g) {
+        if(barType != 1){return UC.noBid;}
+        int x1 = g.vs.xL(), x2 = g.vs.xH();
+        if(x1 > x || x2 < x){return UC.noBid;}
+        int y = g.vs.yM();
+        if(y < sys.yTop() || y > sys.yBot()){return UC.noBid;}
+        return Math.abs(x - (x1+x2)/2);
+      }
+
+      public void act(Gesture g) {
+        Bar.this.incKey();
+      }
+    });
+
+    addReaction(new Reaction("W-W") {   //decrements key on double bar
+      public int bid(Gesture g) {
+        if(barType != 1){return UC.noBid;}
+        int x1 = g.vs.xL(), x2 = g.vs.xH();
+        if(x1 > x || x2 < x){return UC.noBid;}
+        int y = g.vs.yM();
+        if(y < sys.yTop() || y > sys.yBot()){return UC.noBid;}
+        return Math.abs(x - (x1+x2)/2);
+      }
+
+      public void act(Gesture g) {
+        Bar.this.decKey();
+      }
+    });
+
+    addReaction(new Reaction("S-N") {
+      public int bid(Gesture g) {
+        int x = g.vs.xM(), y = g.vs.yL();
+        int y1 = Bar.this.sys.yTop(), y2 = Bar.this.sys.yBot();
+        if(y < y1 || y > y2){return UC.noBid;}
+        int ax = Bar.this.x;
+        int dx = Math.abs(x-ax), dist = dx+16;
+        return dist > 50 ? UC.noBid : dist;
+      }
+
+      public void act(Gesture g) {
+        Bar.this.deleteBar();
+      }
+    });
+  }
+
+  public void deleteBar() {
+    deleteMass();
+  }
+
+  public void incKey() {
+    if(key == null){key = new Key();}
+    if(key.glyph == Glyph.NATURAL){
+      key.glyph = Glyph.SHARP;
+      key.n = 1;
+      return;
+    }
+    if(key.glyph == Glyph.FLAT){
+      key.glyph = Glyph.NATURAL;
+      return;
+    }
+    if(key.n<7){key.n++;}
+  }
+
+  public void decKey() {
+    if(key == null){key = new Key();}
+    if(key.glyph == Glyph.NATURAL){
+      key.glyph = Glyph.FLAT;
+      key.n = -1;
+      return;
+    }
+    if(key.glyph == Glyph.SHARP){
+      key.glyph = Glyph.NATURAL;
+      return;
+    }
+    if(key.n>-7){key.n--;}
   }
 
   //cycleType is not always called, so barType could be other values than (0,1,2)
@@ -109,6 +187,9 @@ public class Bar extends Mass {
       if(barType>3){
         drawDots(g, x, staffTop);
       }
+    }
+    if(barType==1 && key != null){
+      key.drawOnSys(g, sys, x+UC.barKeyOffset);
     }
   }
 

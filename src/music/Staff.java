@@ -219,6 +219,22 @@ public class Staff extends Mass {
     }
   }
 
+
+
+  public Glyph clefAtX(int x) {
+    Clef iClef = initialClef();
+    if(iClef == null){return null;}
+    Glyph ret = iClef.glyph;
+    if(clefs != null){
+      for(Clef clef : clefs){
+        if(clef.x <= x){
+          ret = clef.glyph;
+        }
+      }
+    }
+    return ret;
+  }
+
   //------------------------Fmt----------------------format
   public static class Fmt{
     public boolean barContinues = false;

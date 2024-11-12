@@ -61,8 +61,8 @@ public class MusicEd extends WinApp {
     Layer.ALL.show(g);
     g.drawString(Gesture.recognized, 900, 30);
     if (PAGE != null) {
-      Staff staff = PAGE.sysList.get(0).staffs.get(0);
-      Key.drawOnStaff(g, 7 , Key.fF,110, Glyph.FLAT, staff);
+//      Staff staff = PAGE.sysList.get(0).staffs.get(0);
+//      Key.drawOnStaff(g, 7 , Key.fF,110, Glyph.FLAT, staff);
 //      Glyph.SHARP.showAt(g, 8, 100, PAGE.margins.top+4*8);
 //      Glyph.FLAT.showAt(g, 8, 200, PAGE.margins.top+4*8);
 //      Glyph.NATURAL.showAt(g, 8, 300, PAGE.margins.top+4*8);
@@ -76,7 +76,7 @@ public class MusicEd extends WinApp {
     }
 //    Beam.setPoly(100, 100+G.rnd(100), 200, 100+G.rnd(100), 8);
 //    g.fillPolygon(Beam.poly);
-    //testBeamStack(g);
+//    testBeamStack(g);
   }
 
   public void testBeamStack(Graphics g) {

@@ -19,4 +19,7 @@ public class UC {
   public static final int argDotOffset = 28;
   public static final int argDotSpacing = 11;
   public static final int initialClefOffset = 30;
+  public static final int marginKeyOffset = 60;
+  public static final int barKeyOffset = 10;
+  public static final int accidHeadOffset = 25;
 }
